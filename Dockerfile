@@ -1,13 +1,13 @@
 FROM eclipse-temurin:21-jdk AS build
 WORKDIR /src
 COPY . .
-RUN ./gradlew --no-daemon --max-workers=4 -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxMetaspaceSize=1g" :distribution:archives:linux-tar:assemble
+RUN ./gradlew --no-daemon --max-workers=4 -Dorg.gradle.jvmargs="-Xmx3g -XX:MaxMetaspaceSize=1g" :distribution:archives:linux-aarch64-tar:assemble
 
 FROM eclipse-temurin:21-jre
 RUN set -eux; \
     if ! getent group 1000 >/dev/null; then groupadd --gid 1000 elasticsearch; fi; \
     if ! getent passwd 1000 >/dev/null; then useradd --uid 1000 --gid 1000 --create-home --shell /bin/bash elasticsearch; fi
-COPY --from=build /src/distribution/archives/linux-tar/build/distributions/ /tmp/dist/
+COPY --from=build /src/distribution/archives/linux-aarch64-tar/build/distributions/ /tmp/dist/
 RUN set -eux; \
     tarball="$(ls /tmp/dist/elasticsearch-*-linux-*.tar.gz | head -n 1)"; \
     tar -xzf "$tarball" -C /opt; \
