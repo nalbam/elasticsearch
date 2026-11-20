@@ -14,16 +14,20 @@ RUN set -eux; \
     dir="$(ls -d /opt/elasticsearch-* | head -n 1)"; \
     mv "$dir" /opt/elasticsearch; \
     rm -rf /tmp/dist; \
+    printf '%s\n' \
+      'network.host: 0.0.0.0' \
+      'http.port: 9200' \
+      'discovery.type: single-node' \
+      'xpack.security.enabled: false' \
+      'xpack.security.http.ssl.enabled: false' \
+      'node.store.allow_mmap: false' \
+      >> /opt/elasticsearch/config/elasticsearch.yml; \
+    grep -q '^network.host: 0.0.0.0$' /opt/elasticsearch/config/elasticsearch.yml; \
     mkdir -p /opt/elasticsearch/data /opt/elasticsearch/logs; \
     chown -R 1000:1000 /opt/elasticsearch
 USER 1000
 WORKDIR /opt/elasticsearch
 ENV ES_PATH_CONF=/opt/elasticsearch/config
-ENV discovery.type=single-node
-ENV network.host=0.0.0.0
-ENV xpack.security.enabled=false
-ENV xpack.security.http.ssl.enabled=false
-ENV node.store.allow_mmap=false
 ENV ES_JAVA_OPTS="-Xms1g -Xmx1g"
 EXPOSE 9200
 ENTRYPOINT ["/opt/elasticsearch/bin/elasticsearch"]
