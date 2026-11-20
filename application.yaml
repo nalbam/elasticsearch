@@ -1,0 +1,13 @@
+apiVersion: agent.opspresso.com/v4
+kind: Application
+spec:
+  name: elasticsearch-2
+  repository: github.com/nalbam/elasticsearch
+  owner: dBT43yQ7DQIIIMlYbjiXsIr8tbuIgVJA
+  description: Elasticsearch (elastic/elasticsearch fork) built from source, single-node for dev
+runtime:
+  port: 9200
+  health: /
+build:
+  context: .
+  dockerfile: Dockerfile
